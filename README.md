@@ -5,48 +5,20 @@ This project implements the Tree of Thoughts (ToT) framework, a systematic explo
 ## Project Structure
 
 ```
-Tree_of_Thoughts(ToT)/
-├── tot.py                 # Core ToT implementation
-├── search_strategies.py   # Search algorithms implementation
-├── thought_generator.py   # Thought generation and evaluation
-├── utils.py              # Utility functions
-├── config.py             # Configuration settings
-├── examples/             # Example implementations
-│   ├── game_solver.py
-│   └── math_solver.py
-├── tests/                # Unit tests
-│   ├── test_tot.py
-│   └── test_search_strategies.py
-├── requirements.txt      # Project dependencies
-└── README.md            # This file
 ```
 
 ## Getting Started
 
-1. Clone the repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run example implementations from the `examples/` directory
 
 ## Features
 
-- Implements various search strategies (BFS, DFS, Beam Search)
-- Flexible thought generation and evaluation
-- Configurable parameters for different problem types
-- Example implementations for various reasoning tasks
 
 ## Usage
 
 Basic usage example:
 
 ```python
-from tot import TreeOfThoughts
-from thought_generator import ThoughtGenerator
 
-# Initialize ToT solver
-tot_solver = TreeOfThoughts(thought_generator=ThoughtGenerator())
-
-# Solve a problem
-solution = tot_solver.solve(problem="Your problem description")
 ```
 
 ## Contributing
