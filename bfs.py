@@ -63,7 +63,7 @@ def solve(args, task, idx, to_print=True):
         # for i in new_ys[0]:
         #     print (i)
         new_ys = list(itertools.chain(*new_ys))
-        
+         
         ids = list(range(len(new_ys)))
         # evaluation
         if args.method_evaluate == 'vote':
