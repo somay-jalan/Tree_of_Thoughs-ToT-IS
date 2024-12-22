@@ -36,6 +36,11 @@ def get_proposals(task, x, y):
     proposals = gpt(propose_prompt, n=1, stop=None)[0].split('\n')
     return [y + _ + '\n' for _ in proposals]
 
+def get_proposals_with_information(task, x, y,information): 
+    propose_prompt = task.propose_prompt_with_information_wrap(x, y,information)
+    proposals = gpt(propose_prompt, n=1, stop=None)[0].split('\n')
+    return [y + _ + '\n' for _ in proposals]
+
 def get_samples(task, x, y, n_generate_sample, prompt_sample, stop):
     if prompt_sample == 'standard':
         prompt = task.standard_prompt_wrap(x, y)
@@ -46,7 +51,7 @@ def get_samples(task, x, y, n_generate_sample, prompt_sample, stop):
     samples = gpt(prompt, n=n_generate_sample, stop=stop)
     return [y + _ for _ in samples]
 
-def solve(args, task, idx, to_print=True):
+def solve(args, task, idx, to_print=True, information_staring=True):
     global gpt
     gpt = partial(gpt, model=args.backend, temperature=args.temperature)
     print(gpt)
@@ -55,11 +60,28 @@ def solve(args, task, idx, to_print=True):
     ys = ['']  # current output candidates
     infos = []
     for step in range(task.steps):
-        # generation
-        if args.method_generate == 'sample':
-            new_ys = [get_samples(task, x, y, args.n_generate_sample, prompt_sample=args.prompt_sample, stop=task.stops[step]) for y in ys]
-        elif args.method_generate == 'propose':
-            new_ys = [get_proposals(task, x, y) for y in ys]
+        if information_staring:
+            if ys==['']:
+                # generation
+                if args.method_generate == 'sample':
+                    new_ys = [get_samples(task, x, y, args.n_generate_sample, prompt_sample=args.prompt_sample, stop=task.stops[step]) for y in ys]
+                elif args.method_generate == 'propose':
+                    new_ys = [get_proposals(task, x, y) for y in ys]
+            else:
+                information=""
+                for i,y in enumerate(ys):
+                    information+=f"model number {i} has given steps:\n"
+                    information+=y
+                print("information:")
+                print(information)
+                if args.method_generate == 'propose':
+                    new_ys = [get_proposals_with_information(task, x, y,information) for y in ys]
+        else:
+            # generation
+            if args.method_generate == 'sample':
+                new_ys = [get_samples(task, x, y, args.n_generate_sample, prompt_sample=args.prompt_sample, stop=task.stops[step]) for y in ys]
+            elif args.method_generate == 'propose':
+                new_ys = [get_proposals(task, x, y) for y in ys]
         # for i in new_ys[0]:
         #     print (i)
         new_ys = list(itertools.chain(*new_ys))

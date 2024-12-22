@@ -27,7 +27,10 @@ def gpt(prompt, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop=None)
     elif("gemini" in model):
         api_key = os.getenv("Generative_Language_API_Key_gemini", "")
         client = OpenAI(api_key=api_key,base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
-    elif("llama" in model):
+    elif("llama" or "Qwen" in model):
+        api_key = os.getenv("TOGETHER_API_KEY", "")
+        client = Together(api_key=api_key)
+    else:
         api_key = os.getenv("TOGETHER_API_KEY", "")
         client = Together(api_key=api_key)
     if api_key != "":
@@ -49,9 +52,12 @@ def chatgpt(messages, model="gpt-4", temperature=0.7, max_tokens=1000, n=1, stop
     while n > 0:
         cnt = min(n, 20)
         n -= cnt
+        # print("INPUT MESSAGE:")
+        # print(messages)
         res = completions_with_backoff(model=model, messages=messages, temperature=temperature, max_tokens=max_tokens, n=cnt)
         
         outputs.extend([choice.message.content for choice in res.choices])
+        print("RESPONSE:")
         print(outputs)
         # log completion tokens
         # completion_tokens += res.usage.completion_tokens

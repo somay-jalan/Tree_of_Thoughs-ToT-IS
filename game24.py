@@ -3,7 +3,6 @@ import os
 import sympy
 import pandas as pd
 from base import Task, DATA_PATH
-from game24_prompts import * 
 
 
 def get_current_numbers(y: str) -> str:
@@ -24,7 +23,8 @@ class Game24Task(Task):
         6 * 4 = 24 (left: 24)
         (1 + 2 + 3) * 4 = 24
     """
-    def __init__(self, file='24.csv'):
+    def __init__(self,model, file='24.csv'):
+        global standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing
         """
         file: a csv file (fixed)
         """
@@ -34,7 +34,18 @@ class Game24Task(Task):
         self.data = list(pd.read_csv(path)['Puzzles'])
         self.value_cache = {}
         self.steps = 4
-        self.stops = ['\n'] * 4
+        # self.stops = ['\n'] * 4
+        if "gemini" in model:
+            from game24_prompts_gemini import  standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing
+        elif "gpt" in model:
+            from game24_prompts_gpt import  standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing
+        elif "llama" in model:
+            from game24_prompts_llama_qwen import  standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing
+        else:
+            from game24_prompts_llama_qwen import  standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing
+
+
+
 
     def __len__(self) -> int:
         return len(self.data)
@@ -74,6 +85,16 @@ class Game24Task(Task):
         return prompt
     
     @staticmethod
+    def propose_prompt_with_information_wrap(x: str,y:str, information: str='') -> str:
+        current_numbers = get_current_numbers(y if y else x)
+        if current_numbers == '24':
+            prompt = cot_prompt.format(input=x) + 'Steps:' + y
+            # print([prompt])
+        else:
+            prompt = propose_prompt_with_information_sharing.format(input=current_numbers,information_input=information)
+        return prompt
+    
+    @staticmethod
     def value_prompt_wrap(x: str, y: str) -> str:
         last_line = y.strip().split('\n')[-1]
         if 'left: ' not in last_line:  # last step
@@ -85,7 +106,7 @@ class Game24Task(Task):
     
     @staticmethod
     def value_outputs_unwrap(x: str, y: str, value_outputs: list) -> float:
-        if len(y.strip().split('\n')) == 4 and 'answer' not in y.lower():
+        if len(y.strip().split('\n')) >= 4 and 'answer' not in y.lower():
             return 0
         value_names = [_.split('\n')[-1] for _ in value_outputs]
         value_map = {'impossible': 0.001, 'likely': 1, 'sure': 20}  # TODO: ad hoc

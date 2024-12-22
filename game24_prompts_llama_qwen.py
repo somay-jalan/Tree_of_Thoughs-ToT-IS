@@ -60,7 +60,7 @@ Possible next steps:
 14 /  2 = 7 (left: 7 8 8)
 14 - 2 = 12 (left: 8 8 12)
 Input: {input}
-Possible next steps: (Only give output as specified above don't give explanation.)
+Possible next steps: (Provide output as specified above and don't provide any explanation)
 '''
 # 1-shot with information sharing
 propose_prompt_with_information_sharing = '''Input: 2 8 8 14
@@ -73,15 +73,16 @@ Possible next steps:
 14 - 8 = 6 (left: 2 6 8)
 14 /  2 = 7 (left: 7 8 8)
 14 - 2 = 12 (left: 8 8 12)
-Now here are a few possible steps by other models like yourselves who are working on this task. You can chose to ignore this extra information if you think it is not relevant to your thinking path.
+Now here are a few possible steps by other Large Language Models like yourselves who are working on this task. You can chose to ignore this extra information if you think it is not relevant to your thinking path.
 Information:
 {information_input}
-Understand that the above steps are just extra infomation by other models working on the same task and might even give wrong results, you can chose to ignore this extra information.
+Understand that the above steps are just extra infomation by other models working on the same task and might even give wrong results, you can chose to ignore this extra information or include this information as per your thiknking path.
 Input: {input}
-Possible next step: (Only give output as specified above don't give explanation.)
+Possible next steps: (Provide output as specified above and don't provide any explanation)
 '''
 
-value_prompt = '''Evaluate without providing explanation if given numbers can reach 24 -(sure/likely/impossible) 
+
+value_prompt = '''Evaluate if given numbers can reach 24, answer only with these : "sure" or "likely" or "impossible", don't provide any explanantion.
 10 14
 10 + 14 = 24
 sure
@@ -122,7 +123,7 @@ impossible
 {input}
 '''
 
-value_last_step_prompt = '''Use numbers and basic arithmetic operations (+ - * /) to obtain 24. Given an input and an answer, give a judgement (sure/impossible) if the answer is correct, i.e. it uses each input exactly once and no other numbers, and reach 24 without giving explanation.
+value_last_step_prompt = '''Use numbers and basic arithmetic operations (+ - * /) to obtain 24. Given an input and an answer, give a judgement answer only with "sure" or "impossible" if the answer is correct, i.e. it uses each input exactly once and no other numbers, and reach 24. Don't provide any explanantion
 Input: 4 4 6 8
 Answer: (4 + 8) * (6 - 4) = 24
 Judge: 
