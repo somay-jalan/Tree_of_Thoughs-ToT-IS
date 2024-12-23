@@ -74,7 +74,7 @@ Possible next steps:
 14 - 8 = 6 (left: 2 6 8)
 14 /  2 = 7 (left: 7 8 8)
 14 - 2 = 12 (left: 8 8 12)
-Now here are a few possible steps by other Large Language Models like yourselves who are working on this task. You can chose to ignore this extra information if you think it is not relevant to your thinking path.
+Now here are a few possible steps by other Large Language Models like yourselves who are working on this task. You can chose to ignore these steps if you think it is not relevant to your thinking path or can use these steps if you think they are on the right path.
 {information_input}
 Input: {input}
 Possible next step:
