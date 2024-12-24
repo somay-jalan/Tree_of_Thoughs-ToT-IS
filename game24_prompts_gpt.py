@@ -79,6 +79,30 @@ Now here are a few possible steps by other Large Language Models like yourselves
 Input: {input}
 Possible next step:
 '''
+# 1-shot
+proper_propose_prompt = '''You are playing the game of 24. Use numbers and basic arithmetic operations (+ - * /) to obtain 24. Each step, you are only allowed to choose two of the remaining numbers to obtain a new number.
+An example for the game is 
+Input: 4 4 6 8
+Example Steps:
+1. 4 + 8 = 12 (left: 4 6 12)
+2. 6 - 4 = 2 (left: 2 12)
+3. 2 * 12 = 24 (left: 24)
+Answer: (6 - 4) * (4 + 8) = 24
+Now given input you can propose the next steps the following way,
+Input: 2 8 8 14
+Possible next steps:
+2 + 8 = 10 (left: 8 10 14)
+8 / 2 = 4 (left: 4 8 14)
+14 + 2 = 16 (left: 8 8 16)
+2 * 8 = 16 (left: 8 14 16)
+8 - 2 = 6 (left: 6 8 14)
+14 - 8 = 6 (left: 2 6 8)
+14 /  2 = 7 (left: 7 8 8)
+14 - 2 = 12 (left: 8 8 12)
+Now we are at step number {step}, you have completed past steps (if at step 1 you have not completed any steps and this is the first time you have been prompted) and I want you to propose next possible steps after the completed steps. Only give steps and not any other information.
+Input: {input}
+Possible next steps:
+'''
 
 value_prompt = '''Evaluate if given numbers can reach 24 (sure/likely/impossible)
 10 14

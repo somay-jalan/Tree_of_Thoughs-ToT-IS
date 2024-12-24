@@ -36,6 +36,11 @@ def get_proposals(task, x, y):
     proposals = gpt(propose_prompt, n=1, stop=None)[0].split('\n')
     return [y + _ + '\n' for _ in proposals]
 
+def get_proper_proposals(task, x, y,step): 
+    propose_prompt = task.proper_propose_prompt_wrap(x, y, step)
+    proposals = gpt(propose_prompt, n=1, stop=None)[0].split('\n')
+    return [y + _ + '\n' for _ in proposals]
+
 def get_proposals_with_information(task, x, y,information): 
     propose_prompt = task.propose_prompt_with_information_wrap(x, y,information)
     proposals = gpt(propose_prompt, n=1, stop=None)[0].split('\n')
@@ -51,7 +56,7 @@ def get_samples(task, x, y, n_generate_sample, prompt_sample, stop):
     samples = gpt(prompt, n=n_generate_sample, stop=stop)
     return [y + _ for _ in samples]
 
-def solve(args, task, idx, to_print=True, information_staring=True):
+def solve(args, task, idx, to_print=True, information_staring=False,proper_prompt=False):
     global gpt
     gpt = partial(gpt, model=args.backend, temperature=args.temperature)
     print(gpt)
@@ -76,6 +81,8 @@ def solve(args, task, idx, to_print=True, information_staring=True):
                 print(information)
                 if args.method_generate == 'propose':
                     new_ys = [get_proposals_with_information(task, x, y,information) for y in ys]
+        elif proper_prompt:
+            new_ys = [get_proper_proposals(task, x, y, step) for y in ys]
         else:
             # generation
             if args.method_generate == 'sample':
