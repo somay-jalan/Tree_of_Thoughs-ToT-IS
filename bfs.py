@@ -46,6 +46,11 @@ def get_proposals_with_information(task, x, y,information):
     proposals = gpt(propose_prompt, n=1, stop=None)[0].split('\n')
     return [y + _ + '\n' for _ in proposals]
 
+def get_proper_proposals_with_information(task, x, y, information, step): 
+    propose_prompt = task.proper_propose_prompt_with_information_wrap(x, y, information, step)
+    proposals = gpt(propose_prompt, n=1, stop=None)[0].split('\n')
+    return [y + _ + '\n' for _ in proposals]
+
 def get_samples(task, x, y, n_generate_sample, prompt_sample, stop):
     if prompt_sample == 'standard':
         prompt = task.standard_prompt_wrap(x, y)
@@ -56,7 +61,7 @@ def get_samples(task, x, y, n_generate_sample, prompt_sample, stop):
     samples = gpt(prompt, n=n_generate_sample, stop=stop)
     return [y + _ for _ in samples]
 
-def solve(args, task, idx, to_print=True, information_staring=False,proper_prompt=False):
+def solve(args, task, idx, to_print=True, information_staring=False,proper_prompt=False,proper_prompt_with_information_sharing=False):
     global gpt
     gpt = partial(gpt, model=args.backend, temperature=args.temperature)
     print(gpt)
@@ -65,7 +70,18 @@ def solve(args, task, idx, to_print=True, information_staring=False,proper_promp
     ys = ['']  # current output candidates
     infos = []
     for step in range(task.steps):
-        if information_staring:
+        if proper_prompt_with_information_sharing:
+            if ys==[""]:
+                new_ys = [get_proper_proposals(task, x, y, step) for y in ys]
+            else:
+                information=""
+                for i,y in enumerate(ys):
+                    information+=f"model number {i+1} has given steps:\n"
+                    for j,y_step in enumerate(y.strip().split('\n')):
+                        information+=f'{j+1}. {y_step}\n'
+                print(f"information:{information}")
+                new_ys = [get_proper_proposals_with_information(task, x, y,information, step) for y in ys]
+        elif information_staring:
             if ys==['']:
                 # generation
                 if args.method_generate == 'sample':
@@ -75,7 +91,7 @@ def solve(args, task, idx, to_print=True, information_staring=False,proper_promp
             else:
                 information=""
                 for i,y in enumerate(ys):
-                    information+=f"model number {i} has given steps:\n"
+                    information+=f"model number {i+1} has given steps:\n"
                     information+=y
                 print("information:")
                 print(information)

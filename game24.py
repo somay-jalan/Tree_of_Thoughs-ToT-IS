@@ -30,7 +30,7 @@ class Game24Task(Task):
         (1 + 2 + 3) * 4 = 24
     """
     def __init__(self,model, file='24.csv'):
-        global standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing,proper_propose_prompt
+        global standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing,proper_propose_prompt,proper_propose_prompt_with_information
         """
         file: a csv file (fixed)
         """
@@ -46,9 +46,9 @@ class Game24Task(Task):
         elif "gpt" in model:
             from game24_prompts_gpt import  standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing
         elif "llama" in model:
-            from game24_prompts_llama_qwen import  standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing,proper_propose_prompt
+            from game24_prompts_llama_qwen import  standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing,proper_propose_prompt,proper_propose_prompt_with_information
         else:
-            from game24_prompts_llama_qwen import  standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing,proper_propose_prompt
+            from game24_prompts_llama_qwen import  standard_prompt,cot_prompt,propose_prompt,value_last_step_prompt,value_prompt,propose_prompt_with_information_sharing,proper_propose_prompt,proper_propose_prompt_with_information
 
 
 
@@ -108,6 +108,16 @@ class Game24Task(Task):
             # print([prompt])
         else:
             prompt = proper_propose_prompt.format(input=proper_prompt(x,y),step=step+1)
+        return prompt
+    
+    @staticmethod
+    def proper_propose_prompt_with_information_wrap(x: str,y:str,information:str,step:int) -> str:
+        current_numbers = get_current_numbers(y if y else x)
+        if current_numbers == '24':
+            prompt = cot_prompt.format(input=x) + 'Steps:' + y
+            # print([prompt])
+        else:
+            prompt = proper_propose_prompt_with_information.format(input=proper_prompt(x,y),step=step+1,information_input=information)
         return prompt
     
     @staticmethod
