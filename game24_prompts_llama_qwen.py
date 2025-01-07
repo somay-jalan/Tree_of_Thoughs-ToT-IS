@@ -45,7 +45,7 @@ Steps:
 10 + 5 = 15 (left: 9 15)
 15 + 9 = 24 (left: 24)
 Answer: ((5 + 5) + 5) + 9 = 24
-Input: {input}
+Input: {input} (Provide output as specified above and don't provide any explanantion)
 '''
 
 # 1-shot
